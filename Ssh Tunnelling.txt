@@ -1,0 +1,32 @@
+#Reverse ssh tunnelling
+
+ssh -p port -f -N -T -R the-ip-that-the-server-can-access:port:the-ip-that-the-client-can-access:port username@ssh-server-address
+
+
+example 
+
+ssh -p 59080 -f -N -T -R 0.0.0.0:3000:localhost:3000 cabox@host22.codeanyhost.com
+
+# -p is used because the codeanyhost.com server does not use port 22 (and in other words if you are not using the standard port).
+Both the normal tunnelling and the reverse tunnelling are to be used on ssh client.
+You need to configure the ssh server in the case of reverse tunnel.
+It called reverse because the client act like server for the server and the server act like a client to the client.
+If you write a port without the address, ssh will assume you mean localhost aka 127.0.0.1
+Use this one to allow the server to access something the client is able to access
+
+
+#Normal ssh tunnelling
+
+
+ssh -p port -f -N -T -L the-ip-that-the-client-can-access:port:the-ip-that-the-server-can-access:port username@sshserveraddress
+
+
+
+example
+
+ssh -p port -f -N -T -L 1194:the-ip-that-the-server-can-access:port username@sshserveraddress
+
+# use (-p) if you are using a non-standard port. But if you use the standard 22, then you don't need this parameter.
+Both the normal tunnelling and the reverse tunnelling are to be used on ssh client.
+If you write a port without the address, ssh will assume you mean localhost aka 127.0.0.1
+Use this one to allow the client to access something the server is able to access

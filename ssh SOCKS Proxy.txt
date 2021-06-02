@@ -1,0 +1,8 @@
+ssh -p port -f -N -T -D SOCKS-proxy-port username@ssh-server-address
+
+example
+
+ssh -p 54656 -f -N -T -D 7070 root@18.159.215.151
+
+#If you write a port without the address, ssh will assume you mean localhost aka 127.0.0.1
+
