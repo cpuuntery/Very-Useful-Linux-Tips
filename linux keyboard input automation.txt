@@ -1,0 +1,9 @@
+#To get a window id run
+
+sleep 5; xdotool getactivewindow
+
+#And then cange
+xdotool type --window [window ID] Hello World
+
+#For example execute
+./auto.sh
