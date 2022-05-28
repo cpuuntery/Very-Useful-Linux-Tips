@@ -1,0 +1,8 @@
+1- write the image to disk using gnome disks
+2- update the files
+3- run sudo fdisk -l /dev/sdx
+4-sudo dd if=/dev/sdx of=/path/my_image.img count=From the end sector from fdisk and if you fell feel it you can add 1 to the number
+5-write my_image.img to disk using gnome disks
+6- use gparted to fix gpt Partition Table
+7-Create an image from the fixed partition
+
