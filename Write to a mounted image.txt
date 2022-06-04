@@ -1,0 +1,7 @@
+gnome-disk-image-mounter --writable file.img
+
+OR
+
+1- sudo fdisk -l disk.img
+2- value of the offset is (disk start number) * 512
+3- sudo mount -v -o offset=VALUE -t ext4 /path/to/image /mount/dir
