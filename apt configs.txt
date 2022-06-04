@@ -1,0 +1,11 @@
+#Prevent installing recommended and suggested packages
+
+apt-config dump | grep -we Recommends -e Suggests | sed s/1/0/ | sudo tee /etc/apt/apt.conf.d/99norecommend
+
+#Disable cache creation
+
+sudo nano /etc/apt/apt.conf.d/NoCache
+
+APT::Archives::MaxAge "0";
+APT::Archives::MinAge "0";
+APT::Archives::MaxSize "1";
