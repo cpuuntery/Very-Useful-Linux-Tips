@@ -1,0 +1,16 @@
+cp -R [source_folder]  [destination_folder] (copy the [source_folder] and its files)
+
+cp -R [source_folder/*] [destination_folder] (copy only the files inside [source_folder])
+
+================================================================================
+(cp) need the -R parameter to copy a folder or multiple files
+================================================================================
+
+mv [source_folder] [destination_folder] (move the [source_folder] and its files)
+
+mv [source_folder/*] [destination_folder] (move only the file inside the [source_folder])
+
+================================================================================
+(mv) accept both file and folder names without a parameter
+================================================================================
+P.S (mv) is also used to rename files and folders 
