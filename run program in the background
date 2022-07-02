@@ -1,0 +1,7 @@
+if you need to run a program, and you are not interested in its output, you should use
+[program] > /dev/null 2>&1 & 
+OR
+[program] &>/dev/null &
+and if you want to run more than one program, you can add the other program in a new line in the bash script
+[program] > /dev/null 2>&1 & 
+[program2] > /dev/null 2>&1 & 
