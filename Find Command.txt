@@ -1,0 +1,29 @@
+Find Command searches for files and directories in a directory hierarchy based on a user given expression and can perform a user-specified action on each matched file
+
+find [path...] [options] [expression]
+
+. Is the current directory
+
+-type f to search only of files 
+-type d to search only of directories 
+-name to search for file or directory by name. Wildcard is supported. (case-sensitive)  
+-iname is case-insensitive. Wildcard is supported 
+-exec will run the command. From the working directory, that the find command invoked from.
+-execdir command is run from the subdirectory containing the matched file
+
+if you use -exec or -execdir you must added {} \; or {} \+ after it 
+{} \; the command will be executed on each matched file
+{} \+ each matched file will be passed as arguments to your single command.
+
+Examples
+
+#Execute every sh file by the name generate.mp3.sh
+find . -type f -iname "*.sh" -execdir sh generate.mp3.sh {} \;
+
+#Copy file to every directory and subdirectory
+find /home/yousif/Desktop/Webtoon-Downloader-master/src/If_AI_Ruled_the_World -type d -exec cp /home/yousif/Videos/your_thron.html {} \;
+
+#If you want to exclude parent directory use -mindepth 1
+find /home/yousif/Desktop/Webtoon-Downloader-master/src/If_AI_Ruled_the_World -mindepth 1 -type d -exec cp /home/yousif/Videos/your_thron.html {} \;
+
+
