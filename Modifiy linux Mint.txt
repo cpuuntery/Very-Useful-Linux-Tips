@@ -1,0 +1,122 @@
+STEP 4 AND 5 ARE VERY IMPORTANT. I REPEAT STEP 4 AND 5 ARE VERY IMPORTANT 
+THE CUSTOM IS ISO WILL NOT BOOT WITHOUT STEP 5 AND WITHOUT STEP 4 THE INSTALLER WILL NOT FINISH THE INSTALLATION PROCESS.
+
+0-disable screen saver
+disable start up programs
+show trash on desktop
+dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n
+dpkg --list |grep "^rc" | cut -d " " -f 3 | xargs sudo dpkg --purge
+sudo apt install bleachbit
+Customize nemo
+Customize terminal
+change timezoon
+purge any unnecessary packages
+
+sudo apt purge celluloid* colord* drawing* *espeak* firefox* gnome-calendar* gnome-power-manager* gvfs-backends* hexchat* hplip* hunspell* libmpv* libreoffice* libsmb* mythes* nemo-share* pix* python3-samba* redshift* sane* simple-scan smbclient* speech* system-config-printer thunderbird* timeshift* transmission* avahi* bluetooth* *brltty* btrfs* dcraw* dmraid* doc-base e2fslibs* ed flex* folder-color-switcher fprintd* gamemode* hfsprogs hyphen* ideviceinstaller jfsutils lvm* manpages* media-player* nemo-emblems* nvidia* onboard* *-ppds *orca* pcmciautils pm-utils powermgmt-base pppconfig pppoeconf printer* redshift* reiserfsprogs rhythmbox* samba* thermald* transmission* vim* warpinator* wbrazilian* wbritish* wfrench* witalian* wngerman* wogerman* wportuguese* wspanish* wswiss* xbrlapi* xfsprogs mesa-vulkan-* mesa-va-* mesa-vdpau-* cryptsetup-initramfs cups* ecryptfs* flatpak* *-ppds fwupd* firmware-sof-signed *-dbg libmfx1 libx265* libcodec2* libavcodec* libgs9* poppler-data gdb liblouis* libsane* libflite* qttranslations* guile* geoip* webapp* blueman* bluez* ure liblapack* libmwaw* *gutenprint* ipp* libaom* libzpool* libsnmp* gufw* libqmi* libexiv* gnome-keyring* xserver-xorg-video-amdgpu* xserver-xorg-video-ati* xserver-xorg-video-intel* xserver-xorg-video-nouveau* xserver-xorg-video-qxl* xserver-xorg-video-radeon*
+
+
+echo "export MUFFIN_NO_SHADOWS=1;" >> ~/.profile
+
+
+sudo apt install --no-install-recommends cinnamon
+
+sudo apt install --no-install-recommends libreoffice-calc
+
+
+sudo rm -rf /usr/share/icons/Mint-X*
+sudo rm -rf /usr/share/icons/Mint-Y-*
+sudo rm -rf /usr/share/icons/HighContrast
+sudo rm -rf /usr/share/man
+sudo rm -rf /usr/share/doc
+sudo rm -rf /usr/lib/firmware/netronome
+sudo rm -rf /usr/lib/firmware/amdgpu
+sudo rm -rf /usr/lib/firmware/qcom
+sudo rm -rf /usr/lib/firmware/ath*
+sudo rm -rf /usr/lib/firmware/mellanox
+sudo rm -rf /usr/lib/firmware/mrvl
+sudo rm -rf /usr/lib/firmware/mediatek
+sudo rm -rf /usr/lib/firmware/brcm
+sudo rm -rf /usr/lib/firmware/qed
+sudo rm -rf /usr/lib/firmware/liquidio
+sudo rm -rf /usr/lib/firmware/i915
+sudo rm -rf /usr/lib/firmware/dpaa2
+sudo rm -rf /usr/lib/firmware/vsc
+sudo rm -rf /usr/lib/firmware/cypress
+sudo rm -rf /usr/lib/firmware/ti-connectivity
+sudo rm -rf /usr/lib/firmware/cxgb4
+sudo rm -rf /usr/lib/firmware/bnx2x
+sudo rm -rf /usr/lib/firmware/asihpi
+sudo rm -rf /usr/lib/firmware/nvidia
+sudo rm -rf /usr/lib/firmware/radeon
+sudo rm -rf /usr/lib/modules/*-generic/kernel/drivers/net/wireless
+sudo rm -rf /usr/lib/x86_64-linux-gnu/gstreamer*
+sudo rm -rf /usr/lib/modules/*-generic/kernel/zfs
+sudo rm -rf /usr/lib/firmware/iwlwifi*
+
+
+apt-config dump | grep -we Recommends -e Suggests | sed s/1/0/ | sed s/true/false/ | sudo tee /etc/apt/apt.conf.d/99norecommend
+apt-config dump | grep -we Recommends -e Suggests | sed s/1/0/ | sed s/true/false/ | sudo tee /etc/apt/apt.conf.d/99synaptic
+sudo nano /etc/apt/apt.conf.d/90mintsystem
+
+APT::Archives::MaxAge "0";
+APT::Archives::MinAge "0";
+APT::Archives::MaxSize "1";
+
+
+sudo nano /etc/apt/sources.list.d/official-package-repositories.list
+deb http://packages.linuxmint.com vanessa main upstream import backport 
+
+deb http://iq.archive.ubuntu.com/ubuntu jammy main restricted universe multiverse
+deb http://iq.archive.ubuntu.com/ubuntu jammy-updates main restricted universe multiverse
+deb http://iq.archive.ubuntu.com/ubuntu jammy-backports main restricted universe multiverse
+
+deb http://security.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse
+
+
+copy "drive-removable-media-symbolic.svg" to /usr/share/icons/Mint-Y/devices/symbolic
+
+fix permissions
+chmod -R 644 *
+chown -R root:root *
+
+
+copy home to /etc/skel
+fix permissions
+chown -R root:root .*
+
+rm -rf /home/mint/.config/gtk-3.0/bookmarks
+
+install liberrwolf appimage
+
+1-Create modified filesystem.squashfs
+mksquashfs / /mnt/disk/filesystem.squashfs -comp xz -e /rofs /cdrom /media /proc /sys /mnt
+2-Delete filesystem.squashfs from the iso and replace it with the one from step 1
+3-boot from the iso file 
+4-install Cubic
+sudo apt-add-repository ppa:cubic-wizard/release
+sudo apt update
+sudo apt install cubic
+mount squashfs from the iso with the modified filesystem.squashfs to /media/mint/disk/
+
+take the numbers from 
+
+sudo apt install --reinstall linux-headers-5.15.0-41 linux-headers-5.15.0-41-generic linux-image-5.15.0-41-generic
+
+compress custom-root/boot to a tar.gz archive 
+
+sudo rm -rf * inside custom-root
+
+sudo rm -rf * inside custom-root
+
+sudo rsync -av -A -X /media/mint/disk/ /media/mint/c83f4a2e-933b-4e2e-8d80-2f7fff081412/custom-root
+sudo rm -rf /custom-root/boot
+
+4-in chroot execute 
+sudo mkdir proc
+sudo mkdir sys
+sudo chmod 755 proc sys
+
+extract the compressed file. You will find it in /root/Desktop 
+copy the extracted files to custom-root/boot
+
+5-if you are asked what kernel to select. The last entry always has a short name, select it.
