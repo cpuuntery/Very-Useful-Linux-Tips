@@ -106,8 +106,6 @@ compress custom-root/boot to a tar.gz archive
 
 sudo rm -rf * inside custom-root
 
-sudo rm -rf * inside custom-root
-
 sudo rsync -av -A -X /media/mint/disk/ /media/mint/c83f4a2e-933b-4e2e-8d80-2f7fff081412/custom-root
 sudo rm -rf /custom-root/boot
 
