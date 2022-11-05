@@ -1,6 +1,6 @@
 #Prevent installing recommended and suggested packages
 
-apt-config dump | grep -we Recommends -e Suggests | sed s/1/0/ | sudo tee /etc/apt/apt.conf.d/99norecommend
+apt-config dump | grep -we Recommends -e Suggests | sed s/1/0/ | sed s/true/false/ | sudo tee /etc/apt/apt.conf.d/99norecommend
 
 #Disable cache creation
 
