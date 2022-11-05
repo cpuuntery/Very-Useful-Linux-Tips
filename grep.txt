@@ -1,3 +1,11 @@
 #grep don't like double quotes. it will not work. remember that yousif
 
 grep -r -Po 'your regex'
+
+Print a list of matched files with its match string
+grep -ri 'regex'
+
+Print a list of matched files without its match string
+grep -ril 'regex'
+
+-i argument makes grep case-sensitive
