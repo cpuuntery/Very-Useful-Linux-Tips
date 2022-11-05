@@ -11,7 +11,9 @@ mount --rbind /run run/
 cp /etc/resolv.conf etc/resolv.conf
 
 5-Open another terminal window and type [sudo chroot "hard disk mount point"]
-6-sudo apt purge apport at bcache-tools btrfs-progs cloud-guest-utils cloud-init eatmydata libeatmydata1 libfl.*$ libisns.*$ lvm.*$ lxd-agent-loader lxd-installer mdadm motd-news-config open-iscsi pollinate sg3-utils snapd sosreport thin-provisioning-tools unattended-upgrades xfsprogs libtcl8.6 needrestart heimdal$ libnetplan.*$ tpm-udev gsettings-desktop-schemas python3.*$ alsa.*$ bolt finalrd sbsigntool krb5-locales libbrotli.*$ libcbor.*$ libfido.*$ liblvm2cmd.*$ liblzo.*$ libpackagekit.*$ libproxy.*$ libsas.*$ libwrap.*$ libyaml.*$ secureboot-db sound-theme-freedesktop mime-support cryptsetup isc-dhcp-common groff-base glib-networking-common libmpdec.*$ libuchardet.*$ libicu.*$ python-babel.*$
+
+6-sudo apt purge apport at bcache-* btrfs-* cloud-* eatmydata* libeatmydata* libfl* libisns* lvm* lxd-* mdadm motd-* open-* pollinate sg3-* snap* sosreport thin-* unattended-* xfsprogs* libtcl* needrestart heimdal* libnetplan* tpm-* gsettings-* python3* alsa* bolt* finalrd* sbsigntool* krb* libbrotli* libcbor* libfido* liblvm* liblzo* libpackagekit* libproxy* libsas* libwrap* libyaml* secureboot* sound* mime* cryptsetup* isc-* groff* glib* libmpdec* libldap-* *iscsi* librtmp* libuchardet* libicu* python-babel*
+
 7-sudo apt update && sudo apt-cache search linux-generic
 8-sudo apt install linux-image-unsigned-[choose a result from the search]
 9-create the file [dhcp.network] in the path /etc/systemd/network/ to be like this
@@ -24,11 +26,13 @@ Name=e*
 [Network]
 DHCP=yes
 
+
 10-create the file [fstab] in  /ect to be like this
 nano /etc/fstab
 
 
 LABEL=ubuntu	/	 ext4	defaults	0 0
+
 
 11 - change root password using [passwd] add a user if you want using [adduser [the username]] and add the user to the sudo group using [usermod -aG sudo [the username]]
 12- reboot and then open gparted lable the ext4 partion as [ubuntu] and set boot flag to the partition and then run boot repair
