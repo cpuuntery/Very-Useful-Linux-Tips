@@ -1,0 +1,3 @@
+tools like [cat,grep,sed,tee] support piping. but wget does not support piping 
+so alternatively you will use
+wget "$(grep 'anything' | sed 'anything')"
