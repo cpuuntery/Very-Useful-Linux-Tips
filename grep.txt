@@ -1,11 +1,22 @@
-#grep don't like double quotes. it will not work. remember that yousif
+GREP WILL NOT WORK WITHOUT THE SINGLE QUOTES
+JUST LIKE SED USE SINGLE QUOTE AND NEVER USE DOUBLE QUOTES
 
-grep -r -Po 'your regex'
+grep  -P 'your regex'
 
-Print a list of matched files with its match string
+Print a list of matched files with its match string and with its context, The whole file content will be printed, and the matched string will be coloured differently
 grep -ri 'regex'
 
 Print a list of matched files without its match string
 grep -ril 'regex'
 
+Print a list of matched files without the context of its matched string. The only thing that will be printed out is the file and the matched string. Nothing more and nothing less.
+grep -rio 'now'
+
+Print just the matched string without the name of the file or the context of the match
+grep -rioh 'now'
+
+-P argument makes grep use Perl-compatible regular expression engine because the default grep regex engine is rather weak. Use this with complex regex pattern
+-r argument makes grep look recursively inside the path that is invoked from
 -i argument makes grep case-sensitive
+-o argument hide the context of the matched string
+-h argument hide the file name of the matched string
