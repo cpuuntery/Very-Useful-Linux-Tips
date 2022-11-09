@@ -4,18 +4,36 @@
 sudo rsync -av -A -X /media/mint/disk/ /media/mint/2fa5f7a5-27ef-4ff9-97f0-ade7c9c593c6
 4-cd into the disk and open supersuer terminal and past
 
+find . -iname "*tpm*" -exec rm -rf {} \;
+find . -iname "*ecrypt*" -exec rm -rf {} \;
+find . -iname "*encrypt*" -exec rm -rf {} \;
+find . -iname "*cryptsetup*" -exec rm -rf {} \;
+
 mount -t proc /proc proc/
 mount -t sysfs /sys sys/
 mount --rbind /dev dev/
 mount --rbind /run run/
-cp /etc/resolv.conf etc/resolv.conf
+
+may be needed ??? (cp /etc/resolv.conf etc/resolv.conf)
 
 5-Open another terminal window and type [sudo chroot "hard disk mount point"]
 
-6-sudo apt purge apport at bcache-* btrfs-* cloud-* eatmydata* libeatmydata* libfl* libisns* lvm* lxd-* mdadm motd-* open-* pollinate sg3-* snap* sosreport thin-* unattended-* xfsprogs* libtcl* needrestart heimdal* libnetplan* tpm-* gsettings-* python3* alsa* bolt* finalrd* sbsigntool* krb* libbrotli* libcbor* libfido* liblvm* liblzo* libpackagekit* libproxy* libsas* libwrap* libyaml* secureboot* sound* mime* cryptsetup* isc-* groff* glib* libmpdec* libldap-* *iscsi* librtmp* libuchardet* libicu* python-babel*
+6-sudo apt update && sudo apt-cache search linux-generic
 
-7-sudo apt update && sudo apt-cache search linux-generic
-8-sudo apt install linux-image-unsigned-[choose a result from the search]
+7-sudo apt install linux-image-unsigned-[choose a result from the search]
+
+8-sudo apt purge apport at *bcache* *btrfs* *cloud* *eatmydata* libfl* *isns* *lvm* *lxd* *mdadm* *motd* *open* *pollinate* *ntfs* *sg3* *snap* *sosreport* *thin* *unattended* *xfsprogs* *tcl* *needrestart* *heimdal* *netplan* *tpm* *gsettings* python* *alsa* *bolt* *finalrd* *sbsigntool* krb* *brotli* *cbor* *fido* *lzo* *packagekit* *proxy* *sas* *wrap* *yaml* *secureboot* *sound* *mime* cryptsetup* isc-* *groff* *glib* *mpdec* *ldap* *iscsi* *rtmp* *uchardet* *icu* pol* *udisk* *gnupg* *gpgsm* *gpgme* *png* *gettext* *gpgconf* *dos* *magic* *efivar* *fwupd* *pinentry* *usb-m* *media-* *assuan*
+
+8.5- rm -rf /lib/modules/*-generic/kernel/drivers/md
+rm -rf /lib/modules/*-generic/kernel/drivers/gpu/drm/ttm
+rm -rf /usr/lib/modules/*-generic/kernel/zfs
+rm -rf /usr/lib/modules/*-generic/kernel/fs/xfs
+rm -rf /usr/lib/modules/*-generic/kernel/fs/btrfs
+rm -rf /usr/lib/modules/*-generic/kernel/fs/nfs
+rm -rf /usr/lib/modules/*-generic/kernel/fs/cifs
+sudo rm -rf /usr/share/man
+sudo rm -rf /usr/share/doc
+
 9-create the file [dhcp.network] in the path /etc/systemd/network/ to be like this
 nano /etc/systemd/network/dhcp.network
 
@@ -34,5 +52,16 @@ nano /etc/fstab
 LABEL=ubuntu	/	 ext4	defaults	0 0
 
 
-11 - change root password using [passwd] add a user if you want using [adduser [the username]] and add the user to the sudo group using [usermod -aG sudo [the username]]
-12- reboot and then open gparted lable the ext4 partion as [ubuntu] and set boot flag to the partition and then run boot repair
+11-change root password using [passwd] add a user if you want using [adduser [the username]] and add the user to the sudo group using [usermod -aG sudo [the username]]
+12-systemctl disable systemd-journald.service
+
+nano /etc/systemd/journald.conf
+
+SystemMaxUse=1M
+MaxRetentionSec=1
+ForwardToSyslog=no
+ForwardToKMsg=no
+
+13-you can change the APT config. if you want to do it 
+
+13- reboot and then open gparted lable the ext4 partion as [ubuntu] and set boot flag to the partition and then run boot repair
