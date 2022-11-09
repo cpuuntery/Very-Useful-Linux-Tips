@@ -64,4 +64,4 @@ ForwardToKMsg=no
 
 13-you can change the APT config. if you want to do it 
 
-13- reboot and then open gparted lable the ext4 partion as [ubuntu] and set boot flag to the partition and then run boot repair
+14- reboot and then open gparted lable the ext4 partion as [ubuntu] and set boot flag to the partition and then run boot repair
