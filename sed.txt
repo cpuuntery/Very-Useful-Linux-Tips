@@ -1,5 +1,6 @@
 sed -i 's/original/new/g' file.txt
 
+SED WILL NOT WORK WITHOUT THE SINGLE QUOTES
 JUST LIKE GREP USE SINGLE QUOTE AND NEVER USE DOUBLE QUOTES
 
 
@@ -7,7 +8,7 @@ There is only one way to replace multiple strings in a file using sed. Or a mult
 
 sed -i -e 's/abc/new/g' -e 's/nothing/new/g' theisatest.txt
 
-You can use this commands when piping from less or cat, but you cannot overwrite the file, you can just write the output to another file
+You can use the following commands when piping from less or cat, but you cannot overwrite the file, you can just write the output to another file
 
 1- Pipe sed into another sed 
 
@@ -23,3 +24,5 @@ sed 's/abc/new/g' theisatest.txt | sed 's/nothing/new/g' | tee th444eisatest1.tx
 2-separate the patterns using -e
 
 sed -e 's/1/0/g' -e 's/true/false/g'
+
+-i argument makes sed Overwrite the file. But when piping it is useless, so do not use it when piping
