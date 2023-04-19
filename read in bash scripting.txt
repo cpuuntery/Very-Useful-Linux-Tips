@@ -1,0 +1,19 @@
+In bash scripting read is very bizarre and odd for me, 
+take this as an example
+
+pm list packages | sed 's/package://g' | while read line; do [[ `dumpsys package $line | grep 'android.permission.INTERNET'` ]] && echo "$line"; done
+
+the last line does not need explaining because echo return the value of the variable to the shell and done marks the end of the loop
+
+the first part will be pumped into the variable 
+
+sed 's/package://g' | while read line
+
+the second part, execute something for every line read from the variable
+
+read line; do [[ `dumpsys package $line | grep 'android.permission.INTERNET'` ]]
+
+here is another example
+
+read -p "Enter a word: " word
+echo "You entered $word"
