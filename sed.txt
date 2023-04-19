@@ -26,3 +26,37 @@ sed 's/abc/new/g' theisatest.txt | sed 's/nothing/new/g' | tee th444eisatest1.tx
 sed -e 's/1/0/g' -e 's/true/false/g'
 
 -i argument makes sed Overwrite the file. But when piping it is useless, so do not use it when piping
+
+
+Everything between the start of range, and the end of range can be changed
+
+sed is greedy, it does not support the non-greedy [?] as a workaround you need to be very specific about the end of range
+
+if the start of range and end of range are not at the beginning of the line [.*] will help you a lot
+
+
+
+sed '/start_of_range/,/end_of_range/ s/find/replace/' file
+sed '/start_of_range/{:a;n;/^end_of_range/!ba;s#"find"#"replace"#}' file
+
+
+use the -E flag when dealing with complex regex. And a fun fact, grep also has -E but it is still weaker than the -P
+-e is only used when specifying two regexes.
+-e only expect another -e after it, so you can not use the -E with -e
+and if you are replacing in a file, the first flag must be -i
+sed -e 's/string1/string2/g' -e 's/string4/string5/g'
+
+sed does not support all the “character classes”, or also called “characters sets” 
+you will need to use the alternative form
+here is the table 
+note that dot [.] Wildcard is supported. i will not write the alternative form to \s or \S because it is so long and \s or \s are kind of niche
+\d	Digit	    [0-9] - matches a digit
+\D	Non-digit	[^0-9] - matches all but a digit
+\w	Word	    [a-zA-Z0-9_] - matches a word character
+\W	Non-word	[^a-zA-Z0-9_] - matches all but a word character
+
+If you want to use back-references in sed the flag -E is a must
+in other regex engines $1 means return the first group
+in sed it is \1 like this
+
+echo "one two three four" | sed -E 's/(\w+) (\w+)/\2 \1/g'
