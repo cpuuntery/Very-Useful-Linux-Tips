@@ -20,3 +20,5 @@ grep -rioh 'now'
 -i argument makes grep case-sensitive
 -o argument hide the context of the matched string
 -h argument hide the file name of the matched string
+-B, --before-context=NUM  print NUM lines before the matched string
+-A, --after-context=NUM   print NUM lines after the matched string
