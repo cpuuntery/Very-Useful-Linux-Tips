@@ -13,6 +13,8 @@ sudo find . -type d -iname "cinnamon-screensaver" -execdir rm -rf {} \;
 
 
 #maybe will help the next time you will modify linux mint live boot
+
+sudo find . -iname "*screensaver*" -execdir rm -rf {} \;
 sudo find . -iname "cinnamon-screensaver" -execdir rm -rf {} \;
 sudo find . -iname "csd-screensaver-proxy" -execdir rm -rf {} \;
 
