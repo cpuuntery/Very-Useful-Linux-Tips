@@ -30,3 +30,15 @@ ssh -p port -f -N -T -L 1194:the-ip-that-the-server-can-access:port username@ssh
 Both the normal tunnelling and the reverse tunnelling are to be used on ssh client.
 If you write a port without the address, ssh will assume you mean localhost aka 127.0.0.1
 Use this one to allow the client to access something the server is able to access
+
+
+
+
+If you want to access the ssh server from any another device on the network as the ssh client just. 
+You just need to supply 0.0.0.0 as an address for both client and server just make sure that the ports are correct
+
+any other device on the same local network as the ssh client. You can access the server by using [ssh client IP inside the local network] with the port from the tunnelling command.
+
+for example
+
+ssh -f -N -T -L 0.0.0.0:1555:0.0.0.0:22 root@192.168.122.55
