@@ -1,0 +1,46 @@
+#Get the Ubuntu image you want from
+https://cloud-images.ubuntu.com/releases/
+
+# install guestfs-tools to give you the ability to change the root password of the image
+sudo apt install guestfs-tools
+
+#change the root password to [y]
+sudo virt-customize -a focal-server-cloudimg-arm64.img --root-password password:y
+
+#Add some size to the image
+
+qemu-img resize focal-server-cloudimg-arm64.img +3G
+
+#install qemu arm64
+
+sudo apt install qemu-efi-aarch64 qemu-system-arm virt-manager libvirt-daemon libvirt-daemon-system libvirt-daemon-system libvirt-daemon-system-systemd
+
+sudo virt-manager
+
+#THE FIRST THING THAT YOU MUST DO. IS TO ENABLE XML EDITING.
+Add the following line to QEMU XML configuration
+<rom bar='off'/>
+
+Sometimes the Ubuntu arm64 vm will set up the network correctly. That means you will not get internet access 
+to fix it, get up a systemd service
+
+
+nano /etc/systemd/network/dhcp.network
+
+
+[Match]
+Name=e*
+
+[Network]
+Address=192.168.122.55/24
+Gateway=192.168.122.1
+DNS=192.168.122.1
+
+Or you could do it manually. But the network config will not persist after reboot.
+
+ip link set dev enp1s0 up
+ip addr add 192.168.122.55/24 dev enp1s0
+ip route add default via 192.168.122.1 dev enp1s0
+sudo systemd-resolve --set-dns=192.168.122.1 --interface=enp1s0
+
+
