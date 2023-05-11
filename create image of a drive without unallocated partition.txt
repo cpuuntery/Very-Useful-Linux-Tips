@@ -1,8 +1,51 @@
+The [count] and [skip] parameters scale with the [bs] parameter the default bs value is 512 bytes 
+you can use 1K or 1M, but it uses the binary units 
+and use [iflag=fullblock] to copy the fullblocks
+The skipped size is [bs * skip]
+The output size is [bs * count]
+
+[fullblock] and [sync] are mandatory to be used
+[skip] is optional, it is only used when you want to image a partition in the middle of the disk
+
+1-gnome-disk-image-mounter --writable file.img
+
+2-open gnome disks to get the device block of the mounted image. it is usually like this   /dev/loop1
+
+3-delete any unnecessary files to make the disk image smaller. After you finished deleting the files, unmount the partition so gparted resize it
+
+4-sudo gparted [device block from step 2]
+
+5-resize partitions using gparted
+
+6-The sector count starts from 0.
+So if the unallocated space is at the end. You will need to added 1 to the sector count. If you are using the default bs that is 512 bytes, you just need to add 1 without the multiplication because it is the default 512 bytes
+(sector count+1)
+count = (last sector in gparted) +1
+
+but if the bs is not the default 512 value, the number of count or skip Wil be 
+(sector count+1)*non default bs
+
+if you are copying a partition in the middle of the disk, you do not need to add 1 to the sector count for [skip]
+skip= first sector in gparted
+count = (last sector in gparted) +1
+if=[Can be the block device of the mounted image, the same one you used with gparted]
+
+dd if=/dev/sdb iflag=fullblock of=disk.img count=1000000 conv=sync status=progress
+
+
+
+Or alternatively you can
+
 1- write the image to disk using gnome disks
 2- update the files
 3- run sudo fdisk -l /dev/sdx
-4-sudo dd if=/dev/sdx of=/path/my_image.img count=From the end sector from fdisk and if you fell feel it you can add 1 to the number
+4-sudo dd if=/dev/sdx iflag=fullblock of=/path/my_image.img count=From the end sector from fdisk +1 conv=sync status=progress
+
+
+dd if=/dev/sdb iflag=fullblock of=disk.img count=1000000 conv=sync status=progress
+
+dd if=/dev/sdb iflag=fullblock of=disk.img skip=12345 count=1000000 conv=sync status=progress
+
 5-write my_image.img to disk using gnome disks
 6- use gparted to fix gpt Partition Table
 7-Create an image from the fixed partition
-
