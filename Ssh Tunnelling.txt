@@ -37,7 +37,7 @@ Use this one to allow the client to access something the server is able to acces
 If you want to access the ssh server from any another device on the network as the ssh client 
 You just need to supply 0.0.0.0 as an address for both client and server just make sure that the ports are correct
 
-any other device on the same local network as the ssh client. You can access the server by using [ssh client IP inside the local network] with the port from the tunnelling command.
+any other device on the same local network as the ssh client can access the server by using [ssh client IP inside the local network] with the port from the tunnelling command.
 
 for example
 
