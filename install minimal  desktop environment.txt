@@ -16,11 +16,20 @@ ExecStart=-/sbin/agetty --autologin username --noclear %I 38400 linux
 sudo systemctl enable getty@tty1.service 
 
 
-sudo nano ~/.bash_profile
+nano ~/.bash_profile
 
 # edit the .bash_profile as follows
 
 [[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
+
+Along the way of reducing Ubuntu size. I broke the display output. 
+the only way to get display output is to use vnc
+
+sudo apt install tightvncserver tigervnc-standalone-server icewm
+
+vncpasswd
+
+vncserver -localhost no
 
 
 
