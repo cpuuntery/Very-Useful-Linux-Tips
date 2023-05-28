@@ -4,11 +4,6 @@
 sudo rsync -av -A -X /media/mint/disk/ /media/mint/2fa5f7a5-27ef-4ff9-97f0-ade7c9c593c6
 4-cd into the disk and open supersuer terminal and past
 
-find . -iname "*tpm*" -exec rm -rf {} \;
-find . -iname "*ecrypt*" -exec rm -rf {} \;
-find . -iname "*encrypt*" -exec rm -rf {} \;
-find . -iname "*cryptsetup*" -exec rm -rf {} \;
-
 mount -t proc /proc proc/
 mount -t sysfs /sys sys/
 mount --rbind /dev dev/
@@ -18,24 +13,58 @@ may be needed ??? (cp /etc/resolv.conf etc/resolv.conf)
 
 5-Open another terminal window and type [sudo chroot "hard disk mount point"]
 
-6-sudo apt update && sudo apt-cache search linux-generic
+5.1-sudo apt update
+
+5.2-sudo apt purge apport at *bcache* *btrfs* *cloud* *eatmydata* libfl* *isns* *lvm* *lxd* *mdadm* *motd* *open* *pollinate* *ntfs* *sg3* *snap* *sosreport* *thin* *unattended* *xfsprogs* *tcl* *needrestart* *heimdal* *netplan* *tpm* *gsettings* python* *alsa* *bolt* *finalrd* *sbsigntool* krb* *brotli* *cbor* *fido* *lzo* *packagekit* *proxy* *sas* *wrap* *yaml* *secureboot* *sound* *mime* cryptsetup* isc-* *groff* *glib* *mpdec* *ldap* *iscsi* *rtmp* *uchardet* *icu* pol* *udisk* *gnupg* *gpgsm* *gpgme* *png* *gettext* *gpgconf* *dos* *magic* *efivar* *fwupd* *pinentry* *usb-m* *media-* *assuan* bc eject *binutils* distro-* ethtool* libatasmart* *gpm* libgpm* libintl* libinih* libksba* libctf* libaio* libdevmapper-event* libdns-export* libedit* libmodule-find-perl libmodule-scandeps-perl libnghttp* libnpth* libnss3 libparted-fs-resize* libproc-processtable-perl libpython* libsgutils* libsort-naturally-perl libssh* libterm-readkey-perl libusb* libisc-* libnspr* libsqlite* patch xxd
+
+5.5-sudo apt install deborphan
+
+sudo deborphan --guess-all
+
+if you are OK with removing the orphaned packages run this command AND IT IS VERY IMPORTANT TO RUN THIS COMMAND MORE THAN ONE TIME
+
+sudo deborphan --guess-all | xargs sudo apt purge -y
+
+6-sudo apt-cache search linux-generic
 
 7-sudo apt install linux-image-unsigned-[choose a result from the search]
 
-8-sudo apt purge apport at *bcache* *btrfs* *cloud* *eatmydata* libfl* *isns* *lvm* *lxd* *mdadm* *motd* *open* *pollinate* *ntfs* *sg3* *snap* *sosreport* *thin* *unattended* *xfsprogs* *tcl* *needrestart* *heimdal* *netplan* *tpm* *gsettings* python* *alsa* *bolt* *finalrd* *sbsigntool* krb* *brotli* *cbor* *fido* *lzo* *packagekit* *proxy* *sas* *wrap* *yaml* *secureboot* *sound* *mime* cryptsetup* isc-* *groff* *glib* *mpdec* *ldap* *iscsi* *rtmp* *uchardet* *icu* pol* *udisk* *gnupg* *gpgsm* *gpgme* *png* *gettext* *gpgconf* *dos* *magic* *efivar* *fwupd* *pinentry* *usb-m* *media-* *assuan*
+7.5-echo 'COMPRESS=xz' > /etc/initramfs-tools/conf.d/compress
 
-8.5- rm -rf /lib/modules/*-generic/kernel/drivers/md
-rm -rf /lib/modules/*-generic/kernel/drivers/gpu/drm/ttm
+sudo update-initramfs -u -k all
+
+
+8- rm -rf /lib/modules/*-generic/kernel/drivers/md
+rm -rf /lib/modules/*-generic/kernel/drivers/gpu/
+rm -rf /lib/modules/*-generic/kernel/drivers/video/
+rm -rf /lib/modules/*-generic/kernel/drivers/infiniband/
+rm -rf /lib/modules/*-generic/kernel/sound
+find /lib/modules/*-generic/kernel/drivers/net/ethernet/ -mindepth 1 -maxdepth 1 -type d -not -iname intel -exec rm -rf '{}' \;
+find /usr/share/zoneinfo -mindepth 1 -maxdepth 1 -type d -not -iname Asia -exec rm -rf '{}' \;
+rm -rf /usr/lib/modules/*-generic/kernel/net/ceph
+rm -rf /usr/lib/modules/*-generic/kernel/net/sunrpc
+rm -rf /usr/lib/modules/*-generic/kernel/net/openvswitch
 rm -rf /usr/lib/modules/*-generic/kernel/zfs
 rm -rf /usr/lib/modules/*-generic/kernel/fs/xfs
+rm -rf /usr/lib/modules/*-generic/kernel/fs/nfsd
+rm -rf /usr/lib/modules/*-generic/kernel/fs/ceph
 rm -rf /usr/lib/modules/*-generic/kernel/fs/btrfs
 rm -rf /usr/lib/modules/*-generic/kernel/fs/nfs
 rm -rf /usr/lib/modules/*-generic/kernel/fs/cifs
-sudo rm -rf /usr/share/man
-sudo rm -rf /usr/share/doc
+rm -rf /usr/lib/modules/*-generic/kernel/lib/zstd
+rm -rf /usr/share/man
+rm -rf /usr/share/doc
+rm -rf /usr/share/locale
+rm -rf /etc/cloud
+find . -iname "*tpm*" -exec rm -rf {} \;
+find . -iname "*ecrypt*" -exec rm -rf {} \;
+find . -iname "*encrypt*" -exec rm -rf {} \;
+find . -iname "*cryptsetup*" -exec rm -rf {} \;
+find . -iname "*update-notifier*" -exec rm -rf {} \;
+find . -iname "*dist-packages*" -exec rm -rf {} \;
 
 9-create the file [dhcp.network] in the path /etc/systemd/network/ to be like this
-nano /etc/systemd/network/dhcp.network
+apt install nano && nano /etc/systemd/network/dhcp.network
 
 
 [Match]
@@ -53,15 +82,31 @@ LABEL=ubuntu	/	 ext4	defaults	0 0
 
 
 11-change root password using [passwd] add a user if you want using [adduser [the username]] and add the user to the sudo group using [usermod -aG sudo [the username]]
-12-systemctl disable systemd-journald.service
+
+
+12-systemctl disable systemd-journald.service systemd-journald-audit.socket systemd-journald-dev-log.socket systemd-journald.socket
 
 nano /etc/systemd/journald.conf
 
+RuntimeMaxUse=1M
 SystemMaxUse=1M
 MaxRetentionSec=1
 ForwardToSyslog=no
 ForwardToKMsg=no
+Storage=volatile
+ReadKMsg=no
+RateLimitInterval=9000
+RateLimitBurst=1
+
+nano /etc/rsyslog.conf
+
+$SystemLogRateLimitInterval 9000
+$SystemLogRateLimitBurst 1
+$IMUxSockRateLimitBurst 1
+$IMUXSockRateLimitInterval 9000
 
 13-you can change the APT config. if you want to do it 
+apt-config dump | grep -we Recommends -e Suggests | sed s/1/0/ | sed s/true/false/ | sudo tee /etc/apt/apt.conf.d/99norecommend
+
 
 14- reboot and then open gparted lable the ext4 partion as [ubuntu] and set boot flag to the partition and then run boot repair
