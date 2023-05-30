@@ -4,6 +4,8 @@ find [path...] [options] [expression]
 
 . Is the current directory
 
+GNU find path is optional. If it is not specified, find will use the current directory that it is invoked from as a path.
+
 If type in not specified, find will search for both files and directories
 If name is not specified, find will search for every thing. Files and directories and the content of subdirectories and will return every thing that exist under the search path.
 
@@ -21,7 +23,7 @@ if you use -exec or -execdir you must added {} \; or {} \+ after it
 Examples
 
 #Execute every sh file by the name generate.mp3.sh
-find . -type f -iname "*.sh" -execdir sh generate.mp3.sh {} \;
+find -type f -iname "*.sh" -execdir sh generate.mp3.sh {} \;
 
 #Copy file to every directory and subdirectory
 find /home/yousif/Desktop/Webtoon-Downloader-master/src/If_AI_Ruled_the_World -type d -exec cp /home/yousif/Videos/your_thron.html {} \;
@@ -32,8 +34,17 @@ find /home/yousif/Desktop/Webtoon-Downloader-master/src/If_AI_Ruled_the_World -m
 if find return an unordered list of files. 
 you can fix the ordering of the list like this example
 
-find . -type f -exec ls -A1 {} \+
+find -type f -exec ls -A1 {} \+
 
 OR
 
-find . -type f -print0 | sort -z | xargs -0 ls -A1
+find -type f -print0 | sort -z | xargs -0 ls -A1
+
+#Rename both files and directories recursively
+find -execdir rename 's/find/replace/g' {} +
+
+#Rename only files recursively
+find -type f -execdir rename 's/find/replace/g' {} +
+
+#Rename only directories recursively
+find -type d -execdir rename 's/find/replace/g' {} +
