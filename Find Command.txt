@@ -4,6 +4,9 @@ find [path...] [options] [expression]
 
 . Is the current directory
 
+If type in not specified, find will search for both files and directories
+If name is not specified, find will search for every thing. Files and directories and the content of subdirectories and will return every thing that exist under the search path.
+
 -type f to search only of files 
 -type d to search only of directories 
 -name to search for file or directory by name. Wildcard is supported. (case-sensitive)  
@@ -26,4 +29,11 @@ find /home/yousif/Desktop/Webtoon-Downloader-master/src/If_AI_Ruled_the_World -t
 #If you want to exclude parent directory use -mindepth 1
 find /home/yousif/Desktop/Webtoon-Downloader-master/src/If_AI_Ruled_the_World -mindepth 1 -type d -exec cp /home/yousif/Videos/your_thron.html {} \;
 
+if find return an unordered list of files. 
+you can fix the ordering of the list like this example
 
+find . -type f -exec ls -A1 {} \+
+
+OR
+
+find . -type f -print0 | sort -z | xargs -0 ls -A1
