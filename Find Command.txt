@@ -34,11 +34,11 @@ find /home/yousif/Desktop/Webtoon-Downloader-master/src/If_AI_Ruled_the_World -m
 if find return an unordered list of files. 
 you can fix the ordering of the list like this example
 
-find -type f -exec ls -A1 {} \+
+find -type f -printf "%f\n" 
 
 OR
 
-find -type f -print0 | sort -z | xargs -0 ls -A1
+find -type f | sed -e 's/\/.*\///g' -e 's/^\.//g' -e 's/^\///g'
 
 #Rename both files and directories recursively
 find -execdir rename 's/find/replace/g' {} +
