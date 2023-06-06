@@ -1,0 +1,3 @@
+sed -i 's/\r//g' filename
+sed -i 's/\r$//' filename
+sed -i -e 's/\r//g' -e '$s/\b$/\n/g' filelist.txt
