@@ -1,0 +1,22 @@
+install log2ram
+change size to 100M
+sudo systemctl disable log2ram-daily.timer
+
+sudo nano /etc/pihole/pihole-FTL.conf
+MAXDBDAYS=0
+sudo service pihole-FTL restart
+sudo systemctl restart pihole-FTL
+
+
+
+sudo ip -s -s neigh flush all
+ip neigh flush all
+ip neigh show
+
+conditional forwarding
+
+deleting /etc/pihole/dhcp.leases
+
+
+Admin GUI > Settings > DNS > enable conditional forwarding.
+

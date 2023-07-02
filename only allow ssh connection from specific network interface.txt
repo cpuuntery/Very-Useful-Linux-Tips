@@ -1,0 +1,2 @@
+sudo ufw allow in on tailscale0 to any port 22 && sudo ufw deny in to any port 22 && sudo ufw enable
+

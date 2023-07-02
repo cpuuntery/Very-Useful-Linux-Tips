@@ -1,0 +1,47 @@
+sudo apt purge dphys-swapfile logrotate chromium-browser samba-libs chromium-codecs-ffmpeg-extra libgdata-common libgdata* python3-ldb python3-talloc libgoa-* mkvtoolnix pocketsphinx-en-us python3-mypy poppler-* gdb *codec* *pypy* vlc-*
+
+sudo systemctl disable bootlogs
+sudo systemctl disable apt-daily.service apt-daily.timer apt-daily-upgrade.timer apt-daily-upgrade.service
+sudo systemctl mask swapfile.swap
+sudo nano /boot/cmdline.txt added [fsck.mode=skip noswap] at the end
+sudo dpkg --remove-architecture armhf
+sudo nano /boot/config.txt
+dtoverlay=gpio-shutdown,gpio_pin=21
+dtparam=sd_poll_once
+
+
+
+sudo apt purge dphys-swapfile logrotate chromium-browser samba-libs chromium-codecs-ffmpeg-extra libgdata-common libgdata* python3-ldb python3-talloc libgoa-* mkvtoolnix pocketsphinx-en-us python3-mypy poppler-* gdb *codec* *pypy* vlc-* cups* cups-core-drivers* cups-filters* cups-filters-core-drivers* bluez* gnome-keyring* hplip* hunspell* hyphen-* ipp-* libaom* libc6-dbg* libenchant-* libflite1* libgs9-* libhpmud* liblapack* liblouis* liblouisutdml* liblouisutdm* libpocketsphinx* libqmi-* libsane* *geany* libsane* libsphinxbase* libx26* manpages* modemmanager* printer-driver* printer* python3-microdotphat* python3-numpy* python3-pgzero* python3-picamera2* python3-pidng* python3-pygame* python3-scrollphathd* python3-sense-hat* python3-simplejpeg* python3-unicornhathd* sane-utils* sense-hat* system-config-printer* vim-common* vim-tiny* wbritish* libpython*-d* libstdc++-10-d* librados* libc6-* libgcc-*-d* libtsan* gstreamer1* libasan* libtag1v5* *qpdfview* libjack* liblivemedia* libvlc* libfltk* libmysofa1* libqpdf* libgfortran* gcr p11-* libopenni* libsamplerate* libopenmpt* libdjvulibre* libvpx* *pipewire* libspa* *gstreamer* git-man strace libboost* libsnmp* *qpdfview* *aspell1* libgphoto* man-db libubsan* libgfxdr* libopenexr* libgf* liblsan* libcamera* groff-base *poppler* libtc* debian-reference-en libsnmp* linux-libc-* timgm6mb* libmagic* python3-piexif python3-wheel python3-pyinotify python3-colorzero python3-prctl python3-wrapt python3-soupsieve python3-twython python3-renderpm python3-typing-extensions python3-pigpio python3-rtimulib python3-pexpect python3-cffi-backend python3-cups python3-requests python3-openssl python3-cupshelpers python3-simplejson python3-cairo python3-idna python3-click python3-certifi python3-parso python3-isort python3-lib2to3 python3-flask python3-kms++ python3-urllib3 python3-serial python3-tk python3-bs4 python3-jinja2 python3-html5lib python3-oauthlib python3-pkg-resources python3-typed-ast python3-gpiozero python3-distutils python3-gi python3-werkzeug python3-astroid python3-psutil python3-chardet python3-libcamera python3-cryptography python3-pil python3-setuptools python3-docutils python-pip-whl python3-reportlab python3-pygments python3-lxml python3-logilab-common python3-jedi python3-opengl dillo rpi-eeprom
+
+
+sudo apt install --no-install-recommends lxplug-network mutter pipanel raspberrypi-ui-mods rc-gui rp-prefapps rpi-wayland arandr alacarte pi-package pi-package-session raspberrypi-net-mods raspberrypi-sys-mods raspi-config userconf-pi zenity
+
+
+rm -rf /usr/share/man
+rm -rf /usr/share/doc
+
+
+systemctl disable systemd-journald.service systemd-journald-audit.socket systemd-journald-dev-log.socket systemd-journald.socket
+
+nano /etc/systemd/journald.conf
+
+RuntimeMaxUse=1M
+SystemMaxUse=1M
+MaxRetentionSec=1
+ForwardToSyslog=no
+ForwardToKMsg=no
+Storage=volatile
+ReadKMsg=no
+RateLimitInterval=9000
+RateLimitBurst=1
+
+nano /etc/rsyslog.conf
+
+$SystemLogRateLimitInterval 9000
+$SystemLogRateLimitBurst 1
+$IMUxSockRateLimitBurst 1
+$IMUXSockRateLimitInterval 9000
+
+
+##################################
+You can go to /usr/lib/aarch64-linux-gnu and delete stuff like libLLVM
