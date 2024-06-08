@@ -4,7 +4,8 @@ and use [iflag=fullblock] to copy the fullblocks
 The skipped size is [bs * skip]
 The output size is [bs * count]
 
-[fullblock] and [sync] are mandatory to be used
+[fullblock] and [sync] are mandatory to be used. more info about the flags at the end
+
 [skip] is optional, it is only used when you want to image a partition in the middle of the disk
 
 1-gnome-disk-image-mounter --writable file.img
@@ -49,3 +50,15 @@ dd if=/dev/sdb iflag=fullblock of=disk.img skip=12345 count=1000000 conv=sync st
 5-write my_image.img to disk using gnome disks
 6- use gparted to fix gpt Partition Table
 7-Create an image from the fixed partition
+
+
+there is important caveat when using count dd can copy partial blocks, so when given count it will stop after the given number of blocks, even if some of the blocks were incomplete. You may therefore end up with fewer than bs * count bytes copied, unless you specify iflag=fullblock.
+
+conv=sync tells dd to pad each block to the left with nulls, so that if, due to error, the full block cannot be read, the full length of the original data is preserved, even though not all of the data itself can be included in the image. that way you at least know how damaged the data is, The shorter block at the end when reaching the end of file or disk will be padded with zeroes or blanks
+
+
+Caching of data is a kernel process. That means if you copy a file (no matter via a file manager or via dd), the write cache gets filled and in parallel the real writing to the flash drive starts. To make sure that the writing process is finished (cache completely flushed) it makes sense to use sync. You may have noticed that when you transfer data to an USB flash drive, your desktop environment tells you that the copy is finished. But you are still not able to eject the flash drive safely. Thats because the background kernel process is still flushing the content of the write cache to the flash drive. With the sync operater you will see when the write process is really finished.
+
+conv=fdatasync should be enough and best performing (no file metadata is added after all, and only syncing at the end of the process is really needed), but oflag=sync (complete data + metadata sync after each write) in other words waiting for all temporary caches to empty after submitting each block of data
+
+using oflag=sync, so progress outputs the real transfer speed and not the cached one but could be significantly slower. You can mitigate this, by increasing the block size
