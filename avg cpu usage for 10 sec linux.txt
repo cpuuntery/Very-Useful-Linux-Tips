@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# Collect CPU usage data for 10 seconds
+{
+    for i in {1..5}; do
+        ps -eo pid,comm,%cpu
+        sleep 2
+    done
+} | awk 'NR>1 {sum[$2]+=$3; count[$2]++} END {for (i in sum) print i, sum[i]/count[i]}' | sort -k2 -nr > cpu_usage.log
+
+cat cpu_usage.log
+
+
+#!/bin/bash
+declare -A cpu_usage
+declare -A count
+
+# Collect CPU usage data for 10 seconds
+for i in {1..5}; do
+    while read -r pid comm cpu; do
+        if [[ "$pid" =~ ^[0-9]+$ ]]; then
+            cpu_usage["$comm"]=$(echo "${cpu_usage[$comm]:-0} + $cpu" | bc)
+            count["$comm"]=$(echo "${count[$comm]:-0} + 1" | bc)
+        fi
+    done < <(ps -eo pid,comm,%cpu --no-headers)
+    sleep 2
+done
+
+# Calculate and print the average CPU usage
+for comm in "${!cpu_usage[@]}"; do
+    avg=$(echo "scale=2; ${cpu_usage[$comm]} / ${count[$comm]}" | bc)
+    echo "$comm $avg"
+done | sort -k2 -nr > cpu_usage.log
+
+cat cpu_usage.log
+
+
+
+
+
+
+#!/bin/bash
+# Create or clear the temporary file
+temp_file=$(mktemp)
+
+# Collect CPU usage data for 10 seconds
+# {1..5} means repeated for 5 times and sleep makes the command take 2 seconds 
+for i in {1..5}; do
+    ps -eo pid,comm,%cpu >> "$temp_file"
+    sleep 2
+done
+
+# Calculate and print the average CPU usage
+awk 'NR>1 {sum[$2]+=$3; count[$2]++} END {for (i in sum) print i, sum[i]/count[i]}' "$temp_file" | sort -k2 -nr > cpu_usage.log
+
+# Remove the temporary file
+rm "$temp_file"
+
+cat cpu_usage.log

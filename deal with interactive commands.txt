@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Start command in the background and use direct piping
+command | while IFS= read -r line; do
+    if [[ "$line" == *"string"* ]]; then
+        echo "string matched"
+        pkill command
+        break
+    fi
+done
+
+echo "Exiting script."
+
+#!/bin/bash
+
+# Start command and redirect output to process substitution
+while IFS= read -r line; do
+    if [[ "$line" == *"string"* ]]; then
+        echo "string matched"
+		pkill command
+        break
+    fi
+done < <(command)
+
+echo "Exiting script."
+
+
+
+
+
+
+#!/bin/bash
+# Create a named pipe (FIFO)
+fifo=$(mktemp -u)
+mkfifo "$fifo"
+
+# Start command in the background and redirect output to the named pipe
+command > "$fifo" &
+
+# Loop to read from the named pipe
+while IFS= read -r line; do
+    if [[ "$line" == *"string"* ]]; then
+        echo "string matched"
+		pkill command
+        break
+    fi
+done < "$fifo"
+
+
+# Clean up the named pipe
+rm "$fifo"
+
+echo "Exiting script."
+
+
+
+
+
+
+#!/bin/bash
+temp_file=$(mktemp)
+
+# Start command in the background and redirect output to the temporary file
+command > "$temp_file" &
+
+# Loop to read from the temporary file
+while IFS= read -r line; do
+    if [[ "$line" == *"string"* ]]; then
+        echo "string matched"
+		pkill command
+        break
+    fi
+done < "$temp_file"
+
+# Clean up the temporary file
+rm "$temp_file"
+
+echo "Exiting script."
+
+

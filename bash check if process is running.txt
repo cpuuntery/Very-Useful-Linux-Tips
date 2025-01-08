@@ -1,0 +1,58 @@
+# in android use pidof instead of pgrep -x
+
+# Check if the process 'top' is running
+if pgrep -x "top" > /dev/null
+then
+    echo "Process 'top' is running."
+else
+    echo "Process 'top' is not running. Starting it now..."
+    top &
+fi
+
+
+# Loop until the process 'top' is found running
+while true; do
+    if pgrep -x "top" > /dev/null; 
+	then
+        break
+    else
+        echo "Process 'top' is not running."
+        sleep 5 
+    fi
+done
+
+
+# remove echo
+if pgrep -x "top" > /dev/null
+then
+    :
+else
+    echo "Process 'top' is not running. Starting it now..."
+    top &
+fi
+
+
+
+
+# Check if the processes 'top' and 'chrome' are running
+if pgrep -x "top" > /dev/null && pgrep -x "chrome" > /dev/null
+then
+    echo "Process 'top' and chrome is running."
+else
+#If either top is running or neither process is running
+    echo "Only Process 'top' is running."
+fi
+
+
+
+# Check if the processes 'top' and 'chrome' are running
+if pgrep -x "top" > /dev/null && pgrep -x "chrome" > /dev/null; then
+    echo "Process 'top' and chrome is running."
+elif pgrep -x "top" > /dev/null; then
+    echo "Only Process 'top' is running."
+fi
+
+
+
+
+

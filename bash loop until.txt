@@ -1,0 +1,11 @@
+#!/bin/bash
+
+while true; do
+    if pgrep "chrome" > /dev/null; then
+        echo "Chrome process is running. Exiting loop."
+        break
+    else
+        echo "Chrome process not found. Checking again..."
+        sleep 1
+    fi
+done
