@@ -1,0 +1,35 @@
+nohup command &
+setsid command &
+command & disown               [disown must always be the at the end and there must not be anything after it]
+systemd-run --user command     [stop any output from the command, so there is no need to use {&>/dev/null &} but you also can not log anything even if you wanted to]
+
+
+
+examples
+nohup ./http-file-server &> log.txt
+setsid ./http-file-server &> log.txt
+./http-file-server &> log.txt & disown
+systemd-run --user ./http-file-server
+
+
+
+command &>/dev/null &
+It will not make the command run in background, 
+it will just make any and all output of the command will be sent to dev/null 
+and since that is the only effect, closing the shell will kill the command 
+
+
+Aside from nohup and systemd the other ways keep the command output visible, but there is a difference between nohup sends the output to nohup.out but systemd stop it completely
+So if combined [&>/dev/null &] with these three ways, you can both run the command in the background and get rid of the output if that is what you want
+
+
+nohup command &>/dev/null &
+setsid command &>/dev/null &
+command &>/dev/null & disown
+
+
+
+examples
+nohup ./http-file-server &>/dev/null &
+setsid ./http-file-server &>/dev/null &
+./http-file-server &>/dev/null & disown
