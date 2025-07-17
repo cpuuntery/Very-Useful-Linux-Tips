@@ -1,0 +1,23 @@
+echo 'ACTION=="add|remove|change", KERNEL=="*", SUBSYSTEM=="*", OPTIONS+="last_rule", MODE="0666"' | sudo tee /etc/udev/rules.d/99-permissive.rules > /dev/null && sudo udevadm control --reload && sudo udevadm trigger
+
+
+echo 'ACTION=="add|remove|change", KERNEL=="*", SUBSYSTEM=="*", OPTIONS+="last_rule", MODE="0666"' | sudo tee /etc/udev/rules.d/00-permissive.rules > /dev/null && && sudo udevadm control --reload && sudo udevadm trigger
+
+
+
+echo 'ACTION=="add|remove|change", KERNEL=="*", SUBSYSTEM=="*", OPTIONS+="last_rule", MODE="0666"' | sudo tee /etc/udev/rules.d/99-permissive.rules > /dev/null && sudo udevadm control --reload-rules && sudo udevadm trigger
+
+
+echo 'ACTION=="add|remove|change", KERNEL=="*", SUBSYSTEM=="*", OPTIONS+="last_rule", MODE="0666"' | sudo tee /etc/udev/rules.d/00-permissive.rules > /dev/null && sudo udevadm control --reload-rules && sudo udevadm trigger
+
+
+
+undo 
+
+sudo rm /etc/udev/rules.d/99-permissive.rules && sudo udevadm control --reload-rules && sudo udevadm trigger
+
+or
+sudo rm /etc/udev/rules.d/00-permissive.rules && sudo udevadm control --reload-rules && sudo udevadm trigger
+
+
+

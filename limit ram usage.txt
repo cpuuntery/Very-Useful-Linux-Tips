@@ -1,0 +1,1 @@
+systemd-run --scope -p MemoryHigh=500M [command]
