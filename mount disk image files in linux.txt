@@ -1,0 +1,4 @@
+#if you need to create a path for the mount point 
+mkdir -p /path/to/mountpoint
+
+sudo mount full_path/the_full_file_name /path/to/mountpoint

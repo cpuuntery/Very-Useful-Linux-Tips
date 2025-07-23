@@ -1,0 +1,45 @@
+https://github.com/filebrowser/filebrowser
+
+./filebrowser -a 0.0.0.0
+./filebrowser config set --auth.method=noauth
+./filebrowser -a 0.0.0.0
+
+
+https://github.com/rclone/rclone/releases/download/v1.64.2/rclone-v1.64.2-linux-amd64.zip
+./rclone rcd --rc-web-gui --rc-addr 0.0.0.0:8080 --rc-no-auth
+
+
+https://github.com/zer0tonin/Mikochi
+NO_AUTH=true DATA_DIR=~ ./mikochi
+
+https://github.com/patrickhener/goshs
+./goshs -d ~
+./goshs -V -d ~
+
+https://github.com/mjpclab/go-http-file-server
+./ghfs -l 8080 -A -r ~
+sudo ./ghfs -l 8080 -A -r /
+./ghfs -l 8080 -A -r ~ -L
+
+https://github.com/static-web-server/static-web-server
+./static-web-server -a 192.168.1.143 -p 8080 -z -d ~ --directory-listing-download=targz
+./static-web-server -a 192.168.1.143 -p 8080 -z -d ~ --directory-listing-download=targz -g info
+
+
+
+
+https://github.com/svenstaro/miniserve
+./miniserve-0.31.0-x86_64-unknown-linux-musl ~ -g -u -H
+./miniserve-0.31.0-x86_64-unknown-linux-musl ~ -g -u -H -v
+
+https://github.com/wanetty/upgopher
+./upgopher -dir ~
+
+
+
+
+
+
+
+https://github.com/sgreben/http-file-server
+https://github.com/TheWaWaR/simple-http-server

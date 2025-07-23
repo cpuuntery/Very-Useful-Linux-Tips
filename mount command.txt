@@ -1,0 +1,331 @@
+Use mount --bind src target when you just need a simple mirror mount.
+
+Use mount -o bind,ro src target if you also need to tweak mount options like read-only or nosuid
+example
+
+-o bind,ro
+
+Recursive bind (--rbind or -o rbind)
+Binds the directory and every mountpoint inside it.
+
+You get a full clone of the mount-tree under src
+you will use this one most of the time
+
+
+Non-recursive bind (--bind or -o bind)
+Only binds the single directory you name.
+so it excluid other mount point 
+i think i will need this one in a very rare cases
+
+A non-recursive bind mount (mount --bind or mount -o bind):
+
+- Includes all ordinary files and subdirectories under the source.
+- Excludes any separate filesystems or mounts that live under the source.
+
+In other words, only “other mounts” are left out. All regular subfolders—no matter how deep—are carried over.
+
+Child mountpoints beneath it stay tied to the original location, not the new one.
+
+
+Below is a deep dive on Linux “bind” mounts—what they are, how to invoke them via different forms of the mount command, the behavior differences, and examples showing how to mount one directory onto another.
+
+1. What is a “bind” mount?  
+   - A bind-mount makes an existing directory or file tree visible at another point in the directory hierarchy.  
+   - No data is copied; the original inode structure is simply “re-mounted” at a new path.  
+   - Useful for chroots, containers, overlaying, or simply giving another pathname to the same files.
+
+2. Two common syntaxes  
+   a) mount --bind  
+      Command form:  
+        mount --bind <source> <target>  
+      This is the “long” option name for making a bind mount.  
+   b) mount -o bind  
+      Command form:  
+        mount -o bind <source> <target>  
+      Here, “bind” is one of the comma-separated options passed to -o.  
+   - Under the hood both forms do exactly the same syscall (mount with MS_BIND).  
+   - “--bind” is arguably clearer; “-o bind” is more in-line with other mount options.
+
+3. Full difference between “--bind” and “-o bind”  
+   - There is no functional difference. Both translate into the same mount flags (MS_BIND).  
+   - “--bind” is a dedicated, long-form flag; “-o bind” treats bind as part of the generic option list.  
+   - “--bind” must be the first thing after mount (i.e. you cannot combine “--bind” in a single -o string).  
+     Example legal uses:  
+       mount --bind /src /dst  
+       mount -o bind,ro /src /dst  
+     You cannot do:  
+       mount --bind,ro /src /dst   ← invalid syntax
+
+4. Other useful “bind”-related variants and mount propagation flags  
+   A. Recursive bind  
+      - Command:  
+        mount --rbind <source> <target>  
+      - Or:  
+        mount -o bind,recursive <source> <target>  
+      - Recursively bind-mounts all submounts of <source> into <target>.  
+   B. Remounting with different flags  
+      If you already have a bind mount and want to turn it read-only (or change propagation) without unmounting:  
+        mount -o remount,bind,ro <target>  
+      Common use:  
+        mount --bind /etc/skel /tmp/foo  
+        mount -o remount,ro,bind /tmp/foo  
+   C. Controlling propagation (shared / private / slave / unbindable)  
+      After a bind you can set how mounts beneath it propagate back to the original:  
+        mount --make-shared <target>  
+        mount --make-private <target>  
+        mount --make-slave  <target>  
+        mount --make-unbindable <target>  
+
+5. All the ways to use “mount” for bind-type operations  
+   Function              | Long form                        | Short form  
+   ———————————————————|———————————————————————|————————  
+   Simple bind           | mount --bind SRC DST            | mount -o bind SRC DST  
+   Recursive bind        | mount --rbind SRC DST           | mount -o bind,recursive SRC DST  
+   Remount as read-only  | mount -o remount,bind,ro DST    | —  
+   Make mount shared     | mount --make-shared DST         | —  
+   Make mount private    | mount --make-private DST        | —  
+   Make mount slave      | mount --make-slave DST          | —  
+   Make mount unbindable | mount --make-unbindable DST     | —  
+
+6. Example: mounting a folder onto another folder  
+   Suppose you have:  
+     /data/uploads  
+   and you want it also to appear at:  
+     /var/www/html/uploads  
+
+   a) Create the target directory (if it doesn’t exist):  
+     mkdir -p /var/www/html/uploads  
+
+   b) Simple bind mount:  
+     mount --bind /data/uploads /var/www/html/uploads  
+
+   c) Make it read-only at the new location (optional):  
+     mount -o remount,bind,ro /var/www/html/uploads  
+
+   d) If you want new mounts under /data/uploads to automatically appear under the target, use recursive:  
+     mount --rbind /data/uploads /var/www/html/uploads  
+
+7. Checking your bind mounts  
+   - /proc/mounts (or /etc/mtab) will show lines such as:  
+       /data/uploads /var/www/html/uploads none rw,bind 0 0  
+   - lsblk  — will also display mountpoints.  
+   - findmnt  — convenient for filtering bind mounts:  
+       findmnt -t none -o TARGET,OPTIONS | grep bind  
+
+Summary  
+- “mount --bind” and “mount -o bind” are interchangeable ways to request the same kernel behavior.  
+- Commonly you’ll also see “--rbind”, remount with “ro”, and various propagation controls.  
+- To mount a directory onto another, simply mkdir the target and run one of the above bind commands.
+
+
+By default, Linux mounts are made “private.”
+
+That means, if you just do:
+
+mount /dev/sdx1 /mnt/foo
+
+without any propagation-related flags (no --make-shared, no --make-slave, etc.), the new mount at /mnt/foo will be private:
+
+===== It will not propagate mount or unmount events back up into its parent (the global namespace).
+===== It will not receive mount or unmount events from any other namespace or from the parent.
+
+In other words:
+
+===== "mount --make-private" is the default behavior.
+===== "mount --make-shared" must be requested explicitly if you want two-way propagation.
+
+You can confirm this with:
+
+findmnt -o TARGET,PROPAGATION
+
+which will show “private” against mounts that haven’t been altered.
+
+
+
+Simple Bind
+A non-recursive mirror of one directory at another location.
+
+Command:
+
+bash
+mount --bind SRC DST
+# or
+mount -o bind SRC DST
+Effect: Only the single SRC directory’s contents appear at DST. Sub-mounts under SRC stay behind.
+
+Kernel flag: MS_BIND
+
+Use case: Exposing a config directory (e.g., /etc/app) inside a container or chroot without pulling in /etc/app/ssl if it’s separately mounted.
+
+2. Recursive Bind
+Captures an entire mount tree, including nested mounts.
+
+Command:
+
+bash
+mount --rbind SRC DST
+# or
+mount -o bind,recursive SRC DST
+Effect: Everything under SRC—directories and any filesystems mounted beneath—appears at DST.
+
+Kernel flags: MS_BIND | MS_REC
+
+Use case: Preparing a fully functional chroot or container root where /dev, /proc, and /sys must all follow.
+
+3. Remount as Read-Only
+Switch an existing bind to read-only without unmounting.
+
+Command:
+
+bash
+mount -o remount,bind,ro DST
+Effect: Changes mount flags in place. DST becomes read-only while still bound to SRC.
+remount just overwite the orignal mount options it used to change from ro to rw
+
+Kernel flag: updates with MS_RDONLY
+
+Use case: Lock down a shared library directory in a container so processes can read but never modify files.
+
+4. Mount Propagation: Shared, Private, Slave, Unbindable
+Linux tracks how mount and unmount events propagate between mounts. These four modes control that behavior.
+
+Mode	Command	Propagation Behavior
+Shared	mount --make-shared DST	Sends and receives mount/unmount events with peers.
+Private	mount --make-private DST	Isolated: no event propagation in or out.
+Slave	mount --make-slave DST	Receives events from master, but doesn’t send back.
+Unbindable	mount --make-unbindable DST	Cannot be bind-mounted elsewhere, but otherwise private.
+Shared
+Kernel flag: MS_SHARED
+
+Peers created via --make-shared will all reflect new mounts/unmounts across each other.
+
+Private
+Kernel flag: MS_PRIVATE
+
+Default for most mounts. Protects DST from external mount changes and vice versa.
+
+Slave
+Kernel flag: MS_SLAVE
+
+When the master mount gets a new bind, the slave copy also sees it—but not the other way around.
+in other word it a middle ground between Private and Shared but it one way street from master to slave 
+
+Unbindable
+Kernel flag: MS_UNBINDABLE
+
+Marks DST so it can’t be duplicated with any bind operation, preventing accidental mirrors.
+
+
+
+1. Bind /var/log into chroot
+mount --bind /var/log /mnt/chroot/var/log
+
+2. Make it shared so services logging later propagate back
+mount --make-shared /mnt/chroot/var/log
+# shared just take one paramter and that is the created mount point so it only used after you mounted something
+
+3. Inside chroot, mount a tempfs read-only
+mount -t tmpfs tmpfs /mnt/chroot/tmp
+
+mount -o remount,ro /mnt/chroot/tmp
+
+
+
+
+Simple bind
+===== Purpose
+– Make the directory or file tree at SRC accessible at DST without copying data.
+– Any changes at either path operate on the same underlying inodes.
+===== Underlying flag
+– MS_BIND
+===== Invocation forms
+– Long option: mount --bind SRC DST
+– Short option: mount -o bind SRC DST
+===== When to use
+– You want two different paths to the same data.
+– E.g. chroot environments, container setups, alternative access points.
+===== Example
+mkdir -p /mnt/backup
+mount --bind /home/user/photos /mnt/backup
+Recursive bind
+===== Purpose
+– In addition to binding SRC itself, you also bind every existing sub-mount under SRC into DST.
+– Subdirectories that are themselves mountpoints (e.g. NFS mounts, tmpfs mounts) carry over.
+===== Underlying flags
+– MS_BIND + MS_REC
+===== Invocation forms
+– Long option: mount --rbind SRC DST
+– Short option: mount -o bind,recursive SRC DST
+===== When to use
+– SRC contains other mounts (for example /var has a separate /var/log mount).
+– You want DST to mirror the entire mount hierarchy under SRC.
+===== Example
+mkdir -p /mnt/fullcopy
+mount --rbind /var /mnt/fullcopy
+Remount as read-only
+===== Purpose
+– Change an existing bind mount’s permissions (or other mount flags) without unmounting it.
+– Commonly used to enforce read-only access at DST while SRC remains read-write.
+===== Underlying flags
+– MS_REMOUNT + MS_BIND + MS_RDONLY (if you request “ro”)
+===== Invocation form
+– mount -o remount,bind,ro DST
+===== When to use
+– You have an initial --bind and then decide to lock it down.
+– Avoids disrupting processes that have open files in DST.
+===== Example
+mount --bind /srv/data /mnt/data-copy
+mount -o remount,bind,ro /mnt/data-copy
+Make mount shared
+===== Purpose
+– After a bind, mark DST so that future mounts under DST propagate back to SRC and vice versa.
+– Enables two-way mount-event synchronization between SRC and DST.
+===== Underlying operation
+– mount --make-shared DST
+– This sets the propagation type to “shared.”
+===== When to use
+– Container setups where you want host and container to see each other’s nested mounts.
+– Dynamic environments that mount and unmount sub-filesystems on the fly.
+===== Example
+mount --bind /opt/app /mnt/app
+mount --make-shared /mnt/app
+Make mount private
+===== Purpose
+– Ensure that mounts under DST do not propagate back to SRC, and vice versa.
+– This is the default on most systems, but may need explicit setting after changing propagation.
+===== Underlying operation
+– mount --make-private DST
+===== When to use
+– You want complete isolation of nesting mounts at DST.
+– Prevent accidental mount propagation from chroots or containers.
+===== Example
+mount --bind /usr/local /mnt/usr-local
+mount --make-private /mnt/usr-local
+Make mount slave
+===== Purpose
+– Allow DST to receive mount/unmount events from SRC, but prevent DST’s events from reaching SRC.
+– Unidirectional propagation: source→destination only.
+===== Underlying operation
+– mount --make-slave DST
+===== When to use
+– You want DST to mirror SRC’s nested mounts, but you don’t want your own mounts in DST to leak back.
+===== Example
+mount --rbind /data /mnt/data
+mount --make-slave /mnt/data
+Make mount unbindable
+===== Purpose
+– Prevent DST from ever becoming a propagation source or target.
+– Even if an ancestor is set to shared, DST remains isolated.
+===== Underlying operation
+– mount --make-unbindable DST
+===== When to use
+– High-security or highly controlled environments.
+– Guarantee that no propagation can cross DST’s boundary.
+===== Example
+mount --bind /secure-store /mnt/secure
+mount --make-unbindable /mnt/secure
+Summary of flags and propagation behaviors:
+– MS_BIND : basic bind mount
+– MS_REC : recursive bind
+– MS_REMOUNT : change flags on an existing mount
+– Shared/Private/Slave/Unbindable : controls how new mount events flow between SRC and DST

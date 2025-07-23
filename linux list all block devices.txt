@@ -1,0 +1,11 @@
+sudo lsblk
+
+sudo blkid
+
+sudo blockdev --report
+sudo lshw -class disk -class storage -short
+sudo lshw -class disk -class storage
+sudo lshw
+hwinfo --disk --short
+udevadm info /dev/sdc
+ls -la /sys/class/block

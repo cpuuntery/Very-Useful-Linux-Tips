@@ -1,0 +1,19 @@
+# back up original
+cp disk.img disk.img.bak
+
+# write your 16896 bytes at the very start
+dd if=foo.bin of=disk.img bs=1 count=16896
+
+# append the old content just after the newly written bytes
+dd if=disk.img.bak of=disk.img bs=1 seek=16896 conv=notrunc
+
+
+or
+write the append as a file
+dd if=/dev/sdc of=disk.img bs=1 count=16896
+then use seek to start wrting after the append
+dd if=/dev/sdc of=disk.img seek=33 skip=$((skip * 2)) count=$(((block_count + 1) * 2)) conv=notrunc status=progress
+
+seek skips n blocks from the beginning of the output file.
+
+skip skips n blocks from the beginning of the input file.
