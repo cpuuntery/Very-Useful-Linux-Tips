@@ -16,25 +16,27 @@ delete: Deletion of files.
 
 find the last 100 files that have been written to 
 with unix timestamp 
-sudo find / -xdev -type f -not -path '/proc/*' -not -path '/sys/*' -not -path '/dev/*' -printf '%T@ %p\n' | sort -n | tail -n 100
-maybe faster
-sudo find / -xdev -path /proc -prune -o -path /sys -prune -o -path /dev -prune -o -type f -printf '%T@ %p\n' 2>/dev/null | sort -n | tail -n 100
+sudo find / -xdev \( -path /proc -o -path /sys -o -path /dev \) -prune -o -type f -printf '%T@ %p\n' | sort -n | tail -n 100
+
+send error messages (stderr) to /dev/null
+sudo find / -xdev \( -path /proc -o -path /sys -o -path /dev \) -prune -o -type f -printf '%T@ %p\n' 2>/dev/null | sort -n | tail -n 100
 
 or
-sudo find / -xdev -type f -not -path '/proc/*' -not -path '/sys/*' -not -path '/dev/*' -exec stat --format='%Y %n' {} + 2>/dev/null | sort -n | tail -n 100
-or
-sudo find / -xdev -type f -not -path '/proc/*' -not -path '/sys/*' -not -path '/dev/*' -exec ls -l --time-style=+%s {} + 2>/dev/null | awk '{print $6, $7, $9}' | sort -n | tail -n 100
+sudo find / -xdev \( -path /proc -o -path /sys -o -path /dev \) -prune -o -type f -exec stat --format='%Y %n' {} + 2>/dev/null | sort -n | tail -n 100
 
 
+find the last 100 files that have been created
+sudo find / -xdev \( -path /proc -o -path /sys -o -path /dev \) -prune -o -type f -printf '%C@ %p\n' | sort -n | tail -n 100
 
-find the last 100 files that have been accessed (read from) to 
+find the last 100 files that have been accessed (read from)
 with unix timestamp 
-sudo find / -xdev -type f -not -path '/proc/*' -not -path '/sys/*' -not -path '/dev/*' -exec ls -lu --time=access --time-style=+%s {} + 2>/dev/null | awk '{print $6, $7}' | sort -n | tail -n 100
+sudo find / -xdev \( -path /proc -o -path /sys -o -path /dev \) -prune -o -type f -exec stat --format='%X %n' {} + 2>/dev/null | sort -n | tail -n 100
 
 or
-sudo find / -xdev -type f -not -path '/proc/*' -not -path '/sys/*' -not -path '/dev/*' -exec stat --format='%X %n' {} + 2>/dev/null | sort -n | tail -n 100
+sudo find / -xdev \( -path /proc -o -path /sys -o -path /dev \) -prune -o -type f -printf '%A@ %p\n' | sort -n | tail -n 100
 
 
 
-
+note
+-xdev  Don't descend directories on other filesystems
 
