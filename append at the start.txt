@@ -2,17 +2,20 @@
 cp disk.img disk.img.bak
 
 # write your 16896 bytes at the very start
-dd if=foo.bin of=disk.img bs=1 count=16896
+dd if=/dev/sda of=disk.img_with_gpt_header bs=1 count=16896
 
 # append the old content just after the newly written bytes
-dd if=disk.img.bak of=disk.img bs=1 seek=16896 conv=notrunc
+in other words you use this if have a gpt header and you want to write the partitions after the gpt header because count overwrite and just stop at the stopping point
+you want to use this when the disk image does not have the main gpt header [the one at the very start]
+
+dd if=disk.img.missing_gpt_header of=disk.img_with_gpt_header bs=1 seek=16896 conv=notrunc
 
 
 or
 write the append as a file
-dd if=/dev/sdc of=disk.img bs=1 count=16896
+dd if=/dev/sda of=disk.img bs=1 count=16896
 then use seek to start wrting after the append
-dd if=/dev/sdc of=disk.img seek=33 skip=$((skip * 2)) count=$(((block_count + 1) * 2)) conv=notrunc status=progress
+dd if=/dev/sda of=disk.img seek=33 skip=$((skip * 2)) count=$(((block_count + 1) * 2)) conv=notrunc status=progress
 
 seek skips n blocks from the beginning of the output file.
 
